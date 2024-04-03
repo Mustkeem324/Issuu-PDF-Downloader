@@ -10,7 +10,7 @@ import urllib.parse
 
 
 def print_stylish_big(name):
-    print(name)
+    print("\033[92m" + name + "\033[0m")
 
 def generate_unique_token():
     token = uuid.uuid4().hex
