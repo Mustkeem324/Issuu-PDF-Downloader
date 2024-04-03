@@ -2,7 +2,7 @@
 
 This script is designed to download PDF documents from Issuu using its API. It allows users to input an Issuu document link and automatically fetches the document pages' images, which are then compiled into a PDF file.
 
-![Issuu Downloader Screenshot](Screenshot from 2024-04-04 02-35-27.png)
+![Issuu Downloader Screenshot](image.png)
 *Screenshot of the Issuu PDF Downloader interface*
 
 
