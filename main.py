@@ -10,67 +10,85 @@ import urllib.parse
 
 
 def print_stylish_big(name):
-    print("\033[92m" + name + "\033[0m")
+    try:
+        print("\033[92m" + name + "\033[0m")
+    except Exception as eror:
+        print(f"Error :{eror}")          
 
 def generate_unique_token():
-    token = uuid.uuid4().hex
-    return token
+    try:
+        token = uuid.uuid4().hex
+        return token
+    except Exception as eror:
+        print(f"Error :{eror}")
 
 def download_image(url):
-    response = requests.get(url)
-    if response.status_code == 200:
-        return BytesIO(response.content)
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return BytesIO(response.content)
+    except Exception as eror:
+        print(f"Error :{eror}")
 
 def download_images(image_urls):
-    with ThreadPoolExecutor() as executor:
-        futures = [executor.submit(download_image, url) for url in image_urls]
-        images = [future.result() for future in futures if future.result()]
-    return images
-
+    try:
+        with ThreadPoolExecutor() as executor:
+            futures = [executor.submit(download_image, url) for url in image_urls]
+            images = [future.result() for future in futures if future.result()]
+        return images
+    except Exception as eror:
+        print(f"Error :{eror}")
+    
 
 def convert_images_to_pdf(images, output_folder):
-    pdf_images = []
-    for idx, image in enumerate(images):
-        img = Image.open(image)
-        pdf_images.append(img)
-        unique_token = generate_unique_token()
-        print(f"Pdf Downlaoding Process.....")
-    output_file = os.path.join(output_folder, f"{unique_token}.pdf")
-    print(f"Downloaded here : {output_file} ")
-    pdf_images[0].save(output_file, save_all=True, append_images=pdf_images[1:])
+    try:
+        pdf_images = []
+        for idx, image in enumerate(images):
+            img = Image.open(image)
+            pdf_images.append(img)
+            unique_token = generate_unique_token()
+            print(f"Pdf Downlaoding Process.....")
+        output_file = os.path.join(output_folder, f"{unique_token}.pdf")
+        print(f"Downloaded here : {output_file} ")
+        pdf_images[0].save(output_file, save_all=True, append_images=pdf_images[1:])
+    except Exception as eror:
+        print(f"Error :{eror}")    
 
 def downlaod_issuu_pdf(last_part,fourth_part):
-    url = f"https://reader3.isu.pub/{fourth_part}/{last_part}/reader3_4.json"
+    try:
+        url = f"https://reader3.isu.pub/{fourth_part}/{last_part}/reader3_4.json"
 
-    payload = {}
-    headers = {
-    'accept': '*/*',
-    'accept-language': 'en-US,en;q=0.9,ru;q=0.8,zh-TW;q=0.7,zh;q=0.6',
-    'dnt': '1',
-    'origin': 'https://issuu.com',
-    'referer': 'https://issuu.com/',
-    'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': '"Linux"',
-    'sec-fetch-dest': 'empty',
-    'sec-fetch-mode': 'cors',
-    'sec-fetch-site': 'cross-site',
-    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
-    }
+        payload = {}
+        headers = {
+        'accept': '*/*',
+        'accept-language': 'en-US,en;q=0.9,ru;q=0.8,zh-TW;q=0.7,zh;q=0.6',
+        'dnt': '1',
+        'origin': 'https://issuu.com',
+        'referer': 'https://issuu.com/',
+        'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Linux"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'cross-site',
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
+        }
 
-    response = requests.request("GET", url, headers=headers, data=payload)
-    print(f"Response Status:{response.status_code}" )
-    if response.status_code == 200:
-        data = json.loads(response.text)
-        image_urls = [f"https://{page['imageUri']}" for page in data['document']['pages']]  # Add "https://" prefix here
-        print(f"Downloaded image URLs: {image_urls}")
-        images = download_images(image_urls)
-        
-        output_folder = "output_folder"
-        if not os.path.exists(output_folder):
-            os.makedirs(output_folder)
+        response = requests.request("GET", url, headers=headers, data=payload)
+        print(f"Response Status:{response.status_code}" )
+        if response.status_code == 200:
+            data = json.loads(response.text)
+            image_urls = [f"https://{page['imageUri']}" for page in data['document']['pages']]  # Add "https://" prefix here
+            print(f"Downloaded image URLs: {image_urls}")
+            images = download_images(image_urls)
+            
+            output_folder = "output_folder"
+            if not os.path.exists(output_folder):
+                os.makedirs(output_folder)
 
-        convert_images_to_pdf(images, output_folder)
+            convert_images_to_pdf(images, output_folder)
+    except Exception as eror:
+        print(f"Error :{eror}")    
 
 
 if __name__ == "__main__":
